@@ -9,10 +9,11 @@ $types = [
     3 => 'Private Group',
     4 => 'Public Channel',
     5 => 'Public Group',
-    6 => 'Bots'
+    6 => 'Bots',
+    7 => 'Premium User' // Added for Premium button
 ];
 
-// Always Get All Updates From Telegram API 
+// Always Get All Updates From Telegram API
 $content = file_get_contents("php://input");
 $update = json_decode($content, true);
 
@@ -25,7 +26,7 @@ $message = $update['message'];
 $chat_id = $message['chat']['id'];
 $text = $message['text'] ?? '';
 
-// Start Message String Edit As You Need 
+// Start Message String Edit As You Need
 if ($text === '/start') {
     $reply_text = "👋 <b>Welcome to Chat ID Finder Bot!</b> 🆔\n\n" .
                   "✅ <b>Fetch Any Chat ID Instantly!</b>\n\n" .
@@ -37,19 +38,19 @@ if ($text === '/start') {
                   "⚡ Fast and reliable\n\n" .
                   "<blockquote>🛠 Made with ❤️ By @TheSmartDev</blockquote>";
 
-    // Define All The Keyboard Buttons With Custom Formation Change Formation As You Like
+    // Define All The Keyboard Buttons With Custom Formation
     $keyboard = [
         'keyboard' => [
-            // First row: User button
+            // Row 1: User button
             [
                 ['text' => '👤 User', 'request_user' => ['request_id' => 1, 'user_is_bot' => false]]
             ],
-            // Second row: Private Channel and Private Group
+            // Row 2: Public Group and Private Group
             [
-                ['text' => '🔒 Private Channel', 'request_chat' => [
-                    'request_id' => 2,
-                    'chat_is_channel' => true,
-                    'chat_has_username' => false
+                ['text' => '🌐 Public Group', 'request_chat' => [
+                    'request_id' => 5,
+                    'chat_is_channel' => false,
+                    'chat_has_username' => true
                 ]],
                 ['text' => '🔒 Private Group', 'request_chat' => [
                     'request_id' => 3,
@@ -57,22 +58,23 @@ if ($text === '/start') {
                     'chat_has_username' => false
                 ]]
             ],
-            // Third row: Public Channel and Public Group
+            // Row 3: Public Channel and Private Channel
             [
                 ['text' => '🌐 Public Channel', 'request_chat' => [
                     'request_id' => 4,
                     'chat_is_channel' => true,
                     'chat_has_username' => true
                 ]],
-                ['text' => '🌐 Public Group', 'request_chat' => [
-                    'request_id' => 5,
-                    'chat_is_channel' => false,
-                    'chat_has_username' => true
+                ['text' => '🔒 Private Channel', 'request_chat' => [
+                    'request_id' => 2,
+                    'chat_is_channel' => true,
+                    'chat_has_username' => false
                 ]]
             ],
-            // Fourth row: Bots button
+            // Row 4: Bots and Premium User
             [
-                ['text' => '🤖 Bots', 'request_user' => ['request_id' => 6, 'user_is_bot' => true]]
+                ['text' => '🤖 Bots', 'request_user' => ['request_id' => 6, 'user_is_bot' => true]],
+                ['text' => 'Premium 🌟', 'request_user' => ['request_id' => 7, 'user_is_premium' => true]]
             ]
         ],
         'resize_keyboard' => true,  // Adjusts keyboard size for better fit
@@ -83,7 +85,7 @@ if ($text === '/start') {
     sendHTMLMessage($BOT_TOKEN, $chat_id, $reply_text, $keyboard, true);
 }
 
-// Handle shared user (User or Bots)
+// Handle shared user (User, Bots, or Premium User)
 if (isset($message['user_shared'])) {
     $request_id = $message['user_shared']['request_id'];
     $type = $types[$request_id];
