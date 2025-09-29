@@ -1,6 +1,6 @@
 <?php
 
-$BOT_TOKEN = "7889917711:AAETyBxh2roAnqrCxletMp254qRduqbZKrM";
+$BOT_TOKEN = "YOUR-BOT-TOKEN-HERE";
 
 $LOG_FILE = __DIR__ . '/bot.log';
 
